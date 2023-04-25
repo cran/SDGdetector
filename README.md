@@ -1,7 +1,10 @@
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/SDGdetector)](https://CRAN.R-project.org/package=SDGdetector)
-[![CRAN downloadcount](https://cranlogs.r-pkg.org/badges/grand-total/SDGdetector)](https://cranlogs.r-pkg.org/badges/grand-total/SDGdetector)
 [![DOI](https://zenodo.org/badge/431620191.svg)](https://zenodo.org/badge/latestdoi/431620191)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![CRAN downloadcount](https://cranlogs.r-pkg.org/badges/grand-total/SDGdetector)](https://cranlogs.r-pkg.org/badges/grand-total/SDGdetector)
+[![CRAN downloadcount](https://cranlogs.r-pkg.org/badges/SDGdetector)](https://cranlogs.r-pkg.org/badges/SDGdetector)
+![Visitor Badge](https://visitor-badge.laobi.icu/badge?page_id=yingjieli.visitor-badge)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.05124/status.svg)](https://doi.org/10.21105/joss.05124)
 
 <p align="center">
   <img src="./docs/images/SDG_detector.png" width="300" height="300"/>
@@ -95,7 +98,7 @@ plot_sdg_map(data = df, sdg = SDG, value = Value, country = Country, by_sdg = F)
 
 ## Accuracy Evaluation
 
-This package has achieved high accuracy in detecting SDG-related statements within textual data (> 75%, measured by the alignment between the R package results and four experts' manually-coded results; see this [supplementary document](https://drive.google.com/file/d/1EHUV6Jc3N4A-IshKU4dbxtIqlfj50mzi/view?usp=share_link) for more information.
+This package has achieved high accuracy in detecting SDG-related statements within textual data (> 75%, measured by the alignment between the R package results and four experts' manually-coded results; see this [supplementary document](https://drive.google.com/file/d/1EHUV6Jc3N4A-IshKU4dbxtIqlfj50mzi/view?usp=share_link) for more information. The data and code for reproducing the performance metrics can be found in this repo under [`./docs/accuracy_evaluation/`](https://github.com/Yingjie4Science/SDGdetector/tree/main/docs/accuracy_evaluation). 
 
 <p align="left">
   <img src="./docs/images/Inspection_Accuracy.png" height="300"/>
@@ -116,19 +119,20 @@ Get citation information for *SDGdetector* in R doing
 ```
 To cite SDGdetector in publications, please use:
 
-  Li et al. (2023). SDGdetector: an R-based text mining tool for quantifying efforts toward Sustainable Development Goals. Journal of Open Source Software, 0(0), 6 PAGE.
-  https://doi.org/10.xxxxxx/draft.
+  Li et al. (2023). SDGdetector: an R-based text mining tool for quantifying efforts toward Sustainable Development Goals. Journal of Open Source Software 8, 5124.
+  https://doi.org/10.21105/joss.05124.
 
 A BibTeX entry for LaTeX users is
 
   @Article{,
     title = {SDGdetector: an R-based text mining tool for quantifying efforts toward Sustainable Development Goals},
-    author = {Yingjie Li and Yongze Song and Veronica F. Frans and Meng Cai and Yuqian Zhang and Jianguo Liu},
+    author = {Yingjie Li and Veronica F. Frans and Yongze Song and Meng Cai and Yuqian Zhang and Jianguo Liu},
     journal = {Journal of Open Source Software},
+    doi = {10.21105/joss.05124},
     year = {2023},
-    volume = {1},
-    number = {1},
-    pages = {6},
+    volume = {8},
+    number = {84},
+    pages = {5124},
     url = {https://github.com/Yingjie4Science/SDGdetector},
   }
 ```

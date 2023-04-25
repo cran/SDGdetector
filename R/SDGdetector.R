@@ -3,8 +3,6 @@
 #' @description
 #' Identify 17 Sustainable Development Goals and associated 169 targets in text.
 #'
-#' @usage SDGdetector(x, col)
-#'
 #' @details
 #' In 2015, leaders worldwide adopted 17 Sustainable Development Goals (SDGs) with 169
 #' targets to be achieved by 2030 (https://sdgs.un.org). The framework of SDGs serves
@@ -16,6 +14,7 @@
 #'
 #' @param x   Data frame or a string
 #' @param col Column name for text to be assessed
+#' @param quiet Logical. Suppress info message
 #'
 #' @return
 #' Data frame with the same information as `df` and 18 extra columns: 17 columns marking
@@ -29,13 +28,13 @@
 #' @export
 #'
 #' @examples
-#' my_col=c('our goal is to end poverty globally', 'this product
-#' contributes to slowing down climate change')
+#' my_col <- c("our goal is to end poverty globally", "this product
+#' contributes to slowing down climate change")
 #' my_text <- data.frame(my_col)
 #' SDGdetector(my_text, my_col)
-
-
-SDGdetector <- function(x, col) {
+SDGdetector <- function(x,
+                        col,
+                        quiet = FALSE) {
   nchr <- sdgs <- id <- NULL
 
   # data(SDG_keys, "SDG_keys")
@@ -48,10 +47,14 @@ SDGdetector <- function(x, col) {
     # print('change/put the string into a dataframe')
 
     ## check the number of characters in the sentence
-    if(nchar(x) > 750){
-      message(paste0("The length of your input text reached the limit in PCRE, ",
-                     "please split your input text into shorts ones for another try.",
-                     "Idealy, `nchar(x)` should smaller than 750. "))
+    if (nchar(x) > 750) {
+      message(
+        paste0(
+          "The length of your input text reached the limit in PCRE, ",
+          "please split your input text into shorts ones for another try.",
+          "Idealy, `nchar(x)` should smaller than 750. "
+        )
+      )
     }
 
 
@@ -59,27 +62,35 @@ SDGdetector <- function(x, col) {
       dplyr::mutate(id = dplyr::row_number())
 
     code <- df %>%
-      dplyr::mutate(sdgs = '') ## for later use, to append data to this column
+      dplyr::mutate(sdgs = "") ## for later use, to append data to this column
 
-    for (i in 1:nrow(SDG_keys)){                           ## loop each SDG indicators
-      sdg_i_str <- SDG_keys$SDG_id[i] %>% as.character()   ## get the SDG id name
-      sdg_i_obj <- SDG_keys$SDG_keywords[i]                ## get the corresponding SDG search term list
+    for (i in 1:nrow(SDG_keys)) { ## loop each SDG indicators
+      sdg_i_str <- SDG_keys$SDG_id[i] %>% as.character() ## get the SDG id name
+      sdg_i_obj <- SDG_keys$SDG_keywords[i] ## get the corresponding SDG search term list
 
       # print(sdg_i_str)
       # print(sdg_i_obj)
 
-      code <-  code %>%
+      code <- code %>%
         as.data.frame() %>%
-
-      ## at the sentence level - count once if goals/targets are mentioned ---------------
-      dplyr::mutate(
-        match = ifelse(
-          grepl(pattern = sdg_i_obj, x = col, ignore.case = T, perl = T), 1, 0))                    %>% ## yes-1 or no-0 if they match
-          # grepl(pattern = sdg_i_obj, x = as.character({{col}}), ignore.case = T, perl = T), 1, 0))  %>% ## yes-1 or no-0 if they match
+        ## at the sentence level - count once if goals/targets are mentioned -------------
         dplyr::mutate(
-          sdgs  = ifelse(match > 0, paste0(sdgs, ',', sdg_i_str), sdgs)) %>%
+          match = ifelse(
+            grepl(
+              pattern = sdg_i_obj,
+              x = col,
+              ignore.case = T,
+              perl = T
+            ),
+            1,
+            0
+          )
+        ) %>% ## yes-1 or no-0 if they match
+        dplyr::mutate(
+          sdgs = ifelse(match > 0, paste0(sdgs, ",", sdg_i_str), sdgs)
+        ) %>%
         dplyr::select(-match) %>% ## remove this column
-        dplyr::mutate(sdgs = gsub("^,*|(?<=,),|,*$", "", sdgs, perl=T)) %>%
+        dplyr::mutate(sdgs = gsub("^,*|(?<=,),|,*$", "", sdgs, perl = T)) %>%
         as.data.frame()
     }
 
@@ -88,43 +99,54 @@ SDGdetector <- function(x, col) {
   } else {
     ##
     df <- x %>%
-      dplyr::rename(col = {{col}}) %>%
+      dplyr::rename(col = {{ col }}) %>%
       dplyr::mutate(id = dplyr::row_number())
 
     ## check the number of characters in the sentence
     df_nchar <- df %>%
       dplyr::mutate(nchr = stringr::str_length(col)) %>%
       dplyr::filter(nchr > 750)
-    if(nrow(df_nchar) > 0){
-      message(paste0("The length of your input text reached the limit in PCRE, ",
-                     "please split your input text in rows ",
-                     paste(unique(df_nchar$id), collapse = ", "),
-                     " into shorts ones for another try.",
-                     "Idealy, `nchar(x)` should smaller than 750. "))
+    if (nrow(df_nchar) > 0) {
+      message(paste0(
+        "The length of your input text reached the limit in PCRE, ",
+        "please split your input text in rows ",
+        paste(unique(df_nchar$id), collapse = ", "),
+        " into shorts ones for another try.",
+        "Idealy, `nchar(x)` should smaller than 750. "
+      ))
     }
 
     code <- df %>%
-      dplyr::mutate(sdgs = '') ## for later use, to append data to this column
+      dplyr::mutate(sdgs = "") ## for later use, to append data to this column
 
-    for (i in 1:nrow(SDG_keys)){                           ## loop each SDG indicators
-      sdg_i_str <- SDG_keys$SDG_id[i] %>% as.character()   ## get the SDG id name
-      sdg_i_obj <- SDG_keys$SDG_keywords[i]                ## get the corresponding SDG search term list
+    for (i in 1:nrow(SDG_keys)) { ## loop each SDG indicators
+      sdg_i_str <- SDG_keys$SDG_id[i] %>% as.character() ## get the SDG id name
+      sdg_i_obj <- SDG_keys$SDG_keywords[i] ## get the corresponding SDG search term list
 
       # print(sdg_i_str)
       # print(sdg_i_obj)
 
-      code <-  code %>%
+      code <- code %>%
         as.data.frame() %>%
-
-      ## at the sentence level - count once if goals/targets are mentioned ---------------
-      dplyr::mutate(
-        match = ifelse(
-          grepl(pattern = sdg_i_obj, x = as.character(col), ignore.case = T, perl = T), 1, 0))  %>% ## yes-1 or no-0 if they match
+        ## at the sentence level - count once if goals/targets are mentioned ---------------
         dplyr::mutate(
-          sdgs  = ifelse(match > 0, paste0(sdgs, ',', sdg_i_str), sdgs)) %>%
+          match = ifelse(
+            grepl(
+              pattern = sdg_i_obj,
+              x = as.character(col),
+              ignore.case = T,
+              perl = T
+            ),
+            1,
+            0
+          )
+        ) %>% ## yes-1 or no-0 if they match
+        dplyr::mutate(
+          sdgs = ifelse(match > 0, paste0(sdgs, ",", sdg_i_str), sdgs)
+        ) %>%
         dplyr::select(-match) %>% ## remove this column
-      dplyr::mutate(sdgs = gsub("^,*|(?<=,),|,*$", "", sdgs, perl=T)) %>%
-      as.data.frame()
+        dplyr::mutate(sdgs = gsub("^,*|(?<=,),|,*$", "", sdgs, perl = T)) %>%
+        as.data.frame()
     }
   }
 
@@ -134,5 +156,4 @@ SDGdetector <- function(x, col) {
   coded <- code %>% dplyr::arrange(desc(nchar(sdgs)), id)
 
   return(coded)
-
 }
